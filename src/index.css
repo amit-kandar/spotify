@@ -1,13 +1,30 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tailwind CSS */
+#check-box-1:checked~.check-1 {
+    display: block;
+    /* Use 'display' property directly without '@apply' in regular CSS */
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+#check-box-2:checked~.check-2 {
+    display: block;
+    /* Use 'display' property directly without '@apply' in regular CSS */
+}
+
+/* For Webkit-based browsers (Chrome, Safari, and Opera) */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* For IE, Edge, and Firefox */
+.scrollbar-hide {
+    scrollbar-width: none;
+    /* Specify 'scrollbar-width' property directly without '@apply' in regular CSS */
+}
+
+/* For IE and Edge */
+.scrollbar-hide {
+    -ms-overflow-style: none;
 }
