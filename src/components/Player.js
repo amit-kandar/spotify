@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import TruncateText from './TruncateText';
+import Spinner from '../utils/Rolling-0.5s-197px.svg'
 
 function Player({ img_url, title, playlistName, track, duration }) {
-    const [isPlay, setIsPlay] = useState(true);
+    const [isPlay, setIsPlay] = useState(false);
     const [like, setLike] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLike = () => {
         setLike(prev => !prev)
@@ -24,11 +26,10 @@ function Player({ img_url, title, playlistName, track, duration }) {
             mainBlock.classList.replace('flex', 'hidden');
         }
     };
-
-    title = "I Wanna Be With You(On Chritsmas Day)"
-    playlistName = "The National Parks"
-    duration = 2.57;
-
+    const handleTogglePlay = () => {
+        setIsPlay(prev => !prev);
+        setIsLoading(prev => !prev)
+    };
 
     return (
         <div>
@@ -43,7 +44,7 @@ function Player({ img_url, title, playlistName, track, duration }) {
                             <h1 className='capitalize text-sm font-semibold  w-full animate-infinite-scroll xsm:animate-none'>
                                 {title}
                             </h1>
-                            <p className='text-sm'>The National Parks</p>
+                            <p className='text-sm'>{playlistName}</p>
                         </div>
                     </div>
 
@@ -89,11 +90,40 @@ function Player({ img_url, title, playlistName, track, duration }) {
                         }
                     </div>
                     <div className="w-full px-3">
+                        <audio src={track} controls autoPlay={handleTogglePlay}></audio>
                         <input type="range" name="progress" id="progress" className="appearance-none w-full bg-gray-400 h-1 rounded" />
                         <div className='flex justify-between items-center flex-row'>
                             <span className='text-white text-xs font-sans'>0.00</span>
                             <span className='text-white text-xs font-sans'>{duration}</span>
                         </div>
+                    </div>
+
+                    <div className="flex justify-between items-center px-3 w-full mt-6">
+                        <i className='bx bx-shuffle text-3xl text-zinc-500'></i>
+                        <i className='bx bx-skip-previous text-5xl text-white' ></i>
+                        {
+                            isLoading ?
+                                <div className='relative' onClick={handleTogglePlay}>
+                                    <img src={Spinner} alt="" className='absolute top-0 mix-blend-multiply' />
+                                    <div className='w-14 h-14 flex justify-center items-center rounded-full bg-white'>
+
+                                        {isPlay ? <i className='bx bx-pause text-4xl text-black' ></i> : <i className='bx bx-play text-4xl text-black' ></i>}
+                                    </div>
+                                </div>
+
+                                :
+                                <div className='w-14 h-14 flex justify-center items-center rounded-full bg-white' onClick={handleTogglePlay}>
+                                    {isPlay ? <i className='bx bx-pause text-4xl text-black' ></i> : <i className='bx bx-play text-4xl text-black' ></i>}
+                                </div>
+
+                        }
+                        <i className='bx bx-skip-next text-5xl text-white' ></i>
+                        <i className='bx bx-repeat text-3xl text-zinc-500' ></i>
+                    </div>
+
+                    <div className='w-full flex justify-between items-center px-3 mt-10'>
+                        <i className='bx bxs-devices text-xl text-gray-100' ></i>
+                        <i className='bx bx-share-alt text-xl text-gray-100' ></i>
                     </div>
                 </div>
             </div>
