@@ -90,7 +90,6 @@ function Player({ img_url, title, playlistName, track, duration }) {
                         }
                     </div>
                     <div className="w-full px-3">
-                        <audio src={track} controls autoPlay={handleTogglePlay}></audio>
                         <input type="range" name="progress" id="progress" className="appearance-none w-full bg-gray-400 h-1 rounded" />
                         <div className='flex justify-between items-center flex-row'>
                             <span className='text-white text-xs font-sans'>0.00</span>
