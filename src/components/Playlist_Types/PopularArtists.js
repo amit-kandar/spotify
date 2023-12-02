@@ -4,14 +4,20 @@ import PlaylistItem from '../PlaylistItem';
 function PopularArtists({ list, path }) {
     return (
         <div>
-            <div className='mb-2 pl-4'>
-                <h1 className='text-white text-lg font-bold'>Popular artists</h1>
+            <div className='mb-2 px-4 flex items-baseline justify-between'>
+                <h1 className='playlist-heading text-white text-lg font-bold'>Popular artists</h1>
+                <span className='show-all-btn text-[#a7a7a7]'>Show all</span>
             </div>
-            <div className='w-full overflow-x-scroll flex whitespace-nowrap scrollbar-hide scroll-smooth'>
+            <div className='w-full p-4 gap-[20px] overflow-x-scroll flex whitespace-nowrap scrollbar-hide scroll-smooth'>
                 {
-                    list.map(e => {
-                        return <PlaylistItem key={e.id} img_url={e.img_url} title={e.title} path={path} />
-                    })
+                    list.map(e =>
+                        <PlaylistItem
+                            key={e.id}
+                            img_url={e.img_url}
+                            title={e.title}
+                            author={e.author}
+                            path={path} />
+                    )
                 }
             </div>
         </div>

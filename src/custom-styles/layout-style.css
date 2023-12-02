@@ -1,0 +1,155 @@
+/* ~~~~~ ScrollBar of the page starts ~~~~~ */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgb(35, 35, 35);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(105, 105, 105);
+    transition: all 0.5s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(135, 135, 135);
+}
+
+/* ~~~~~ ScrollBar of the page ends ~~~~~ */
+
+/* ~~~~~ Progress Bar of Player starts ~~~~~ */
+.player-progress {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    cursor: pointer;
+    outline: none;
+    overflow: hidden;
+    border-radius: 16px;
+    transition: all 0.25s;
+    -webkit-transition: all 0.25s;
+}
+
+.player-progress::-webkit-slider-runnable-track {
+    height: 4px;
+    background: #8f8f8f;
+    border-radius: 16px;
+}
+
+.player-progress::-moz-range-track {
+    height: 15px;
+    background: #8f8f8f;
+    border-radius: 16px;
+}
+
+.player-progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 15px;
+    width: 0;
+    border-radius: 0px;
+    background-color: white;
+    border: 5px solid white;
+    box-shadow: -407px 0 0 400px white;
+    transition: all 0.25s;
+    -webkit-transition: all 0.25s;
+}
+
+.player-progress::-moz-range-thumb {
+    height: 15px;
+    width: 0px;
+    background-color: white;
+    border-radius: 50%;
+    border: 1px solid white;
+    box-shadow: -407px 0 0 400px white;
+}
+
+/* ~~~~~ Progress Bar of Player ends ~~~~~ */
+
+/* ~~~~~ Typography starts ~~~~~ */
+.item-title,
+.item-author,
+.playlist-heading,
+.show-all-btn {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.item-title {
+    font-weight: 700;
+    font-size: 14.5px;
+    letter-spacing: 0.2px;
+}
+
+.item-author {
+    font-weight: 600;
+    font-size: 13.5px;
+    letter-spacing: 0.2px;
+}
+
+.playlist-heading {
+    font-weight: 900;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.show-all-btn {
+    font-weight: 700;
+    font-size: 13.2px;
+    letter-spacing: 0.1px;
+    cursor: pointer;
+}
+
+.playlist-heading:hover,
+.show-all-btn:hover {
+    text-decoration: underline;
+    text-underline-offset: 1px;
+}
+
+/* ~~~~~ Typography ends ~~~~~ */
+
+/* ~~~~~ Shadow Effects starts ~~~~~ */
+.card-shadow {
+    box-shadow: 3px 0px 1px rgba(0, 0, 0, 0.2),
+        -3px 0px 1px rgba(0, 0, 0, 0.2);
+}
+
+.img-shadow {
+    box-shadow: 0px 5px 10px rgba(32, 32, 32, 0.4);
+}
+
+/* ~~~~~ Shadow Effects ends ~~~~~ */
+
+/* ~~~~~ Main Block Player starts ~~~~~ */
+#main-block {
+    height: 100vh;
+    overflow-y: auto;
+}
+
+#main-block::-webkit-scrollbar {
+    width: 0;
+}
+
+/* ~~~~~ Main Block Player ends ~~~~~ */
+
+/* ~~~~~ Play Item Styles starts ~~~~~ */
+.item-play-btn {
+    right: -85px;
+    bottom: 44px;
+    opacity: 0;
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+}
+
+.item-play-card:hover .item-play-btn {
+    bottom: 51px;
+    opacity: 1;
+}
+
+.item-play-btn:hover {
+    transform: scale(1.05);
+    -webkit-transform: scale(1.05);
+    filter: brightness(120%);
+    -webkit-filter: brightness(120%);
+}
+/* ~~~~~ Play Item Styles ends ~~~~~ */
