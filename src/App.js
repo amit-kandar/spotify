@@ -10,6 +10,9 @@ import SignupByPhone from "./routes/SignupByPhone";
 import Home from "./routes/Home";
 import Playlist from "./routes/Playlist";
 
+// Importing CSS Files:
+import './custom-styles/layout-style.css';
+
 function App() {
   return (
     <Router>
