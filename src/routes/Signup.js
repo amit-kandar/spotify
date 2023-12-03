@@ -350,7 +350,7 @@ function Signup() {
             <div className='w-full py-8 pl-8 md:py-7' onClick={back}>
                 <Icon icon="logos:spotify" width="110" />
             </div>
-            <div className='hidden justify-center page' id='page1'>
+            <div className='flex justify-center page' id='page1'>
                 <div className='flex flex-col px-8 sm:max-w-[380px]'>
                     <h1 className='text-4xl font-bold text-white mb-10 md:text-5xl'>Sign up to start listening</h1>
                     <div className='w-full flex flex-col'>
@@ -436,7 +436,7 @@ function Signup() {
                     </div>
                 </div>
             </div>
-            <div className='flex justify-center page' id='page3'>
+            <div className='hidden justify-center page' id='page3'>
                 <div className='flex flex-col w-full px-8 xsm:w-[550px]'>
                     <div className='w-full flex justify-start bg-zinc-400'>
                         <div className="w-[66%] h-[2.75px] bg-green-500" ></div>
@@ -515,7 +515,7 @@ function Signup() {
                             </div>
                             <div className='text-white flex flex-col justify-start'>
                                 <span className='font-semibold'>Gender</span>
-                                <span className='text-zinc-400 font-medium text-sm'>We use you gender to personalize our content recommendations and ads for you.</span>
+                                <span className='text-zinc-400 font-medium text-sm'>We use your gender to personalize our content recommendations and ads for you.</span>
                                 <div className='flex flex-wrap mt-3'>
                                     <div className='flex flex-row items-center gap-2 max-w-fit'>
                                         <input
