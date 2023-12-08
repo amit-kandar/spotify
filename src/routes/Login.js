@@ -1,39 +1,51 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Icon } from '@iconify/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Error from '../components/Error';
+import Spinner from '../utils/Rolling-1s-200px.svg';
+import axios from '../config/axios';
 
 function Login() {
-    const [emailInput, setEmailInput] = useState('');
-    const [password, setPassword] = useState('');
-    const [emailError, setEmailError] = useState(false);
-    const [passError, setPassError] = useState(false);
+    const [data, setData] = useState({ email: '', password: '' });
+    const [isErr, setIsErr] = useState({ email: false, password: false });
+    const [buttonClass, setButtonClass] = useState("bg-green-900");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const navigate = useNavigate();
 
     function validateEmailAndUsername() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const usernameRegex = /^[a-zA-Z0-9]{3,}$/;
 
-        if (usernameRegex.test(emailInput) || emailRegex.test(emailInput)) {
-            setEmailError(false);
+        if (usernameRegex.test(data.email) || emailRegex.test(data.email)) {
+            setIsErr(prev => ({ ...prev, email: false }));
         } else {
-            setEmailError(true);
+            setIsErr(prev => ({ ...prev, email: true }));
         }
     }
 
     function validatePassword() {
         const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+={};:<>|./?,-])[A-Za-z\d!@#$%^&*()_+={};:<>|./?,-]{8,13}$/;
-        setPassError(!regex.test(password));
+        setIsErr(prev => ({ ...prev, password: !regex.test(data.password) }));
     }
 
     const handleEmailAndUsernameChange = (e) => {
-        setEmailInput(e.target.value);
+        setData(prev => ({ ...prev, email: e.target.value }))
         validateEmailAndUsername();
     };
 
     const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
+        setData(prev => ({ ...prev, password: e.target.value }));
         validatePassword();
     };
+
+    useEffect(() => {
+        if (isErr.email || isErr.password || data.email === '' || data.password === '')
+            setButtonClass('bg-green-900');
+        else
+            setButtonClass('bg-green-500');
+    }, [data, isErr, setButtonClass])
+
 
     const showPassword = () => {
         const eye = document.getElementById('eye');
@@ -57,6 +69,27 @@ function Login() {
             toggle.classList.replace('fa-toggle-off', 'fa-toggle-on');
         }
     };
+
+    const handleLogin = async () => {
+        if (isErr.email || isErr.password)
+            return;
+
+        try {
+            setIsLoading(true);
+            const response = await axios.post('/auth/login', data);
+            sessionStorage.setItem("token", response.data.token);
+            navigate('/')
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+
+
+
     return (
         <div>
             <div className='w-full bg-black py-10 pl-10 md:py-7'>
@@ -101,12 +134,12 @@ function Login() {
                                 type="text"
                                 name="email"
                                 id="email&username"
-                                value={emailInput}
+                                value={data.email}
                                 onChange={handleEmailAndUsernameChange}
                                 placeholder='Email or username'
-                                className={`py-3 pl-3 rounded-md bg-[#121212] text-white border outline-none ${emailError ? "border-red-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-red-500" : "border-zink-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-white"}`}
+                                className={`py-3 pl-3 rounded-md bg-[#121212] text-white border outline-none ${isErr.email ? "border-red-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-red-500" : "border-zink-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-white"}`}
                             />
-                            {emailError ? <Error err="Please enter your Spotify username or email address" /> : ""}
+                            {isErr.email ? <Error err="Please enter your Spotify username or email address" /> : ""}
                         </div>
                         <div className='flex flex-col mb-3'>
                             <label htmlFor="password" className='text-white mb-2'>Password</label>
@@ -115,24 +148,25 @@ function Login() {
                                     type="password"
                                     name="password"
                                     id="password"
-                                    value={password}
+                                    value={data.password}
                                     onChange={handlePasswordChange}
                                     placeholder='Password'
-                                    className={`py-3 pl-3 rounded-md bg-[#121212] text-white w-full border outline-none ${passError ? "border-red-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-red-500" : "border-zink-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-white"}`}
+                                    className={`py-3 pl-3 rounded-md bg-[#121212] text-white w-full border outline-none ${isErr.password ? "border-red-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-red-500" : "border-zink-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-white"}`}
                                 />
                                 <i className="fa-regular fa-eye-slash text-white absolute right-3 text-xl" id='eye' onClick={showPassword}></i>
                             </div>
-                            {passError ? <Error err="Please enter your password" /> : ""}
+                            {isErr.password ? <Error err="Please enter your password" /> : ""}
                         </div>
                         <span className='w-max flex flex-row items-center gap-3 text-white' onClick={handleToggle}>
                             <i className="fa-solid fa-toggle-on text-green-500 text-3xl" id='toggle' ></i>
                             <span>Remember me</span>
                         </span>
                     </div>
-                    <div className='flex justify-center w-full md:w-1/2 text-black font-bold cursor-pointer'>
-                        <span className='w-full py-3 flex items-center justify-center bg-green-500 rounded-3xl'>
+                    <div className='flex flex-row gap-3 items-center w-full md:w-1/2 text-black font-bold cursor-pointer' onClick={handleLogin}>
+                        <span className={`w-full py-3 flex items-center justify-center rounded-3xl ${buttonClass}`}>
                             <span>Log In</span>
                         </span>
+                        {isLoading ? <img src={Spinner} alt="loader" className="w-10" /> : null}
                     </div>
 
                     <div className='flex flex-col items-center justify-center py-9 font-medium text-white'>

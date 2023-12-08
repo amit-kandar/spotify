@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Playlists from '../components/Playlists';
 import data from '../utils/data';
 import Player from '../components/Player';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
     const img_url = 'https://i.scdn.co/image/ab67706f00000002118ecaf6c5151716f13fd0b1';
     const title = "I Wanna Be With You(On Chritsmas Day)";
     const playlistName = "The National Parks";
     const track = require('../utils/The National Parks __ I Wanna Be With You (On Christmas Day) (Official Visualizer).mp3');
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!sessionStorage.getItem('token'))
+            navigate('/login');
+    }, [navigate]);
+
     return (
         <div className='relative min-w-full min-h-screen cursor-pointer bg-[#121212]' >
             <div className='flex flex-row justify-between items-center p-4'>

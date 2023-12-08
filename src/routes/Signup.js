@@ -4,6 +4,9 @@ import { validateEmail, validatePassword } from '../utils/functions';
 import Error from '../components/Error';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import axios from '../config/axios';
+import Spinner from '../utils/Rolling-1s-200px.svg';
+import Warning from '../components/Warning';
 
 function Signup() {
 
@@ -11,6 +14,10 @@ function Signup() {
 
     const [isOpen, setIsOpen] = useState(false);
     const [clicked, setClicked] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [buttonClass, setButtonClass] = useState("bg-green-900");
+    const [isEmailExists, setIsEmailExists] = useState(false);
+    const [email_warning_text, setEmail_warning_text] = useState('')
 
     const months = [
         "January",
@@ -71,6 +78,14 @@ function Signup() {
             }
         }
 
+        if (currentPage.id === 'page3') {
+            setButtonClass("bg-green-500");
+        } else {
+            setButtonClass("bg-green-900");
+        }
+
+        if (isEmailExists)
+            return console.warn("Email already exists!");
         if (currentPage.id === 'page1') {
             if (isErr.email)
                 return;
@@ -78,6 +93,7 @@ function Signup() {
                 setIsErr(prev => ({ ...prev, email: true }));
                 return; // Stop execution if there's an empty field
             }
+
             currentPage.classList.replace('flex', 'hidden');
             document.getElementById('page2').classList.replace('hidden', 'flex');
         } else if (currentPage.id === 'page2') {
@@ -193,6 +209,8 @@ function Signup() {
                 ...prev,
                 [field]: !isValid
             }))
+            setButtonClass(isErr.email ? "bg-green-900" : "bg-green-500");
+            setIsEmailExists(false);
         }
 
         // Password validation
@@ -212,6 +230,8 @@ function Signup() {
             } else {
                 setIsErr((prev) => ({ ...prev, [field]: false, }));
             }
+
+            setButtonClass(isErr.password ? "bg-green-900" : "bg-green-500");
         }
 
         // Name validation
@@ -223,13 +243,13 @@ function Signup() {
                 setIsErr(prev => ({ ...prev, name: false }));
                 setData(prev => ({ ...prev, name: value }))
             }
+            setButtonClass(isErr.name ? "bg-green-900" : "bg-green-500");
         }
 
         // Year validation
         if (field === 'year') {
             const year = value.replace(/\D/g, '').slice(0, 4);
             const is_valid_year = /^\d{1,4}$/.test(year);
-
             if (isErr.dob) {
                 setIsErr(prev => ({ ...prev, dob: false, month: true, day: true }));
             }
@@ -248,10 +268,10 @@ function Signup() {
                     setError(prev => ({ ...prev, year: "Please enter the year of your birth date using four digits (e.g., 1990)" }));
                 }
             } else if (is_valid_year) {
-                if (year > '2010') {
+                if (year > 2010) {
                     setIsErr(prev => ({ ...prev, year: true }));
                     setError(prev => ({ ...prev, year: "You're too young to create a Spotify account." }));
-                } else if (year < '1900') {
+                } else if (year < 1900) {
                     setIsErr(prev => ({ ...prev, year: true }));
                     setError(prev => ({ ...prev, year: "Please enter a birth year from 1900 onwards." }));
                 } else {
@@ -260,6 +280,7 @@ function Signup() {
                 }
                 setData(prev => ({ ...prev, year: year }));
             }
+            setButtonClass(isErr.year ? "bg-green-900" : "bg-green-500");
         }
 
         // Month validation
@@ -277,6 +298,7 @@ function Signup() {
             setData(prev => ({ ...prev, month: value }));
             setIsErr(prev => ({ ...prev, month: false }));
             setIsOpen(false);
+            setButtonClass(isErr.month ? "bg-green-900" : "bg-green-500");
         }
 
         // Day validation
@@ -303,14 +325,15 @@ function Signup() {
                 setData(prev => ({ ...prev, day: day }));
                 setIsErr(prev => ({ ...prev, day: false }));
             }
-
+            setButtonClass(isErr.day ? "bg-green-900" : "bg-green-500");
 
         }
 
         // Gender validation
         if (field === 'gender') {
             setData(prev => ({ ...prev, gender: value }));
-            setIsErr(prev => ({ ...prev, gender: false }))
+            setIsErr(prev => ({ ...prev, gender: false }));
+            setButtonClass(isErr.gender ? "bg-green-900" : "bg-green-500");
         }
 
     }
@@ -333,9 +356,50 @@ function Signup() {
         setIsOpen((prev) => !prev);
     };
 
-    const signup = () => {
-        navigate('/');
-    }
+    useEffect(() => {
+        const pages = document.getElementsByClassName('page');
+        let currentPage;
+
+        for (const page of pages) {
+            if (page.classList.contains('flex')) {
+                currentPage = page;
+                break;
+            }
+        }
+        if (currentPage.id === 'page3') {
+            if (data.name === '' || data.year === '' || data.month === '' || data.day === '' || data.gender === '')
+                setButtonClass('bg-green-900');
+            else if (isErr.name || isErr.year || isErr.month || isErr.day || isErr.gender)
+                setButtonClass('bg-green-900');
+            else
+                setButtonClass('bg-green-500');
+        }
+
+
+    }, [data, setButtonClass, isErr])
+
+
+    const signup = async () => {
+        if (isErr.day || isErr.email || isErr.gender || isErr.name || isErr.month || isErr.password || isErr.year) {
+            // If any error exists, handle it or return an error message
+            console.log(isErr);
+            return console.error('Please fill in all required fields correctly.');
+        }
+
+        try {
+            setIsLoading(true);
+            const response = await axios.post('/auth/signup', data);
+            if (response.status === 409)
+                return console.error(response.data.message);
+            sessionStorage.setItem("token", response.data.token);
+            navigate('/');
+        } catch (error) {
+            console.error('Error during signup:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
 
     useEffect(() => {
         if (isErr.year && isErr.month && isErr.day) {
@@ -343,6 +407,35 @@ function Signup() {
             setError(prev => ({ ...prev, dob: "Please enter your date of birth." }));
         }
     }, [isErr, setIsErr, setError])
+
+    // Check email exists
+    useEffect(() => {
+        async function fetchData() {
+            if (data.email !== '' && !isErr.email) {
+                try {
+                    const response = await axios.post('/auth/check-email', { email: data.email });
+
+                    if (response.data.exists) {
+                        setIsEmailExists(response.data.exists);
+                        setEmail_warning_text(
+                            <p className="text-sm text-black font-medium">
+                                This email is already linked to an existing account. To continue, {' '}
+                                <Link to="/login" className="underline">log in</Link>
+                            </p>
+                        );
+                    }
+                } catch (error) {
+                    console.error('Error fetching email existence:', error);
+                    // Handle error as needed (e.g., show error message)
+                }
+            }
+        }
+
+        fetchData();
+    }, [data.email, isErr.email, setIsEmailExists, setEmail_warning_text]);
+
+
+
 
 
     return (
@@ -363,13 +456,17 @@ function Signup() {
                             onChange={(e) => { onChange(e, "email") }}
                             placeholder='name@domain.com'
                             autoComplete='true'
-                            className={`py-3 pl-3 text-white bg-inherit rounded border outline-none ${isErr.email ? "border-red-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-red-500" : "border-zink-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-white"}`}
+                            className={`py-3 pl-3 text-white bg-inherit rounded border outline-none ${isErr.email || isEmailExists ? "border-red-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-red-500" : "border-zink-500 focus:outline-[3.5px] focus:outline-offset-[-3px] focus:outline-white"}`}
                         />
                         {isErr.email ? <Error err="This email is invalid. Make sure it's written like example@email.com" /> : null}
+                        {isEmailExists ? <Warning text={email_warning_text} /> : null}
                     </div>
                     <Link to="/login/phone" className='mt-2 text-green-400 font-semibold underline max-w-fit'>Use phone number instead.</Link>
-                    <div className='text-center w-full py-3 bg-green-600 rounded-3xl mt-5 cursor-pointer' tabIndex={0} onClick={next}>
-                        <span className='font-bold text-black'>Next</span>
+                    <div className='w-full mt-5 flex flex-row gap-3 items-center'>
+                        <div className={`text-center w-full py-3 ${buttonClass} rounded-3xl cursor-pointer`} tabIndex={0} onClick={next}>
+                            <span className='font-bold text-black'>Next</span>
+                        </div>
+                        {isLoading ? <img src={Spinner} alt="loader" className="w-10" /> : null}
                     </div>
                     <div className="mt-8 text-center relative">
                         <span className="text-gray-400 before:absolute before:left-0 before:top-1/2 before:bg-gray-500 before:h-[1px] before:w-[45%] before:block after:bg-gray-500 after:h-[1px] after:block after:w-[45%] after:absolute after:right-0 after:top-1/2">or</span>
@@ -429,7 +526,7 @@ function Signup() {
                             <p className="text-zinc-400 text-sm text-left mt-2">The password must contain at least 8 characters. We recommend including at least 1 number and 1 special character.</p>
                         </div>
                         <div className='mt-36 md:mt-16'>
-                            <div className='text-center w-full py-3 bg-green-600 rounded-3xl mt-5 cursor-pointer' onClick={next}>
+                            <div className={`text-center w-full py-3 ${buttonClass} rounded-3xl mt-5 cursor-pointer`} onClick={next}>
                                 <span className='font-bold text-black'>Next</span>
                             </div>
                         </div>
@@ -581,7 +678,7 @@ function Signup() {
                             </div>
                         </div>
                         <div className='mt-20 md:mt-16'>
-                            <div className='text-center w-full py-3 bg-green-600 rounded-3xl mt-5 cursor-pointer' onClick={next}>
+                            <div className={`text-center w-full py-3 ${buttonClass} rounded-3xl mt-5 cursor-pointer`} onClick={next}>
                                 <span className='font-bold text-black'>Next</span>
                             </div>
                         </div>
@@ -647,10 +744,11 @@ function Signup() {
                                 </p>
                             </div>
                         </div>
-                        <div className='mt-20 md:mt-16'>
-                            <div className='text-center w-full py-3 bg-green-600 rounded-3xl mt-5 cursor-pointer' onClick={signup}>
+                        <div className='mt-20 md:mt-16 flex flex-row gap-3 items-center'>
+                            <div className={`text-center w-full py-3 ${buttonClass} rounded-3xl mt-5 cursor-pointer`} onClick={signup}>
                                 <span className='font-bold text-black'>Sign up</span>
                             </div>
+                            {isLoading ? <img src={Spinner} alt="loader" className="w-10 mt-5" /> : null}
                         </div>
                     </div>
                 </div>
