@@ -92,7 +92,8 @@ function Signup() {
 
             if (Object.keys(errors).length === 0 && !isEmailExists) {
                 setStep((prevStep) => prevStep + 1);
-            } else if (step === 0) {
+            }
+            else if (step === 0) { // Errors 
                 setIsValid(prev => ({ ...prev, email: true }));
             } else if (step === 1) {
                 setIsValid(prev => ({ ...prev, password: true }));
@@ -110,6 +111,8 @@ function Signup() {
         });
     };
 
+    console.log(errors);
+
     const back = () => {
         setStep(s => s - 1);
     };
@@ -121,6 +124,7 @@ function Signup() {
             setIsEmailExists(false);
         }
 
+        // Errors
         const fields = ['name', 'year', 'month', 'day', 'gender'];
         const isValidFields = {};
 
