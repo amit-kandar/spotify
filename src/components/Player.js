@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import TruncateText from './TruncateText';
-import Spinner from '../utils/Rolling-0.5s-197px.svg';
+import Spinner from '../assets/Rolling-0.5s-197px.svg';
 import { formatDuration } from '../utils/functions';
 
 // Expand function moved out of the component

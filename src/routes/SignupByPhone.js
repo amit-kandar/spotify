@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import countries from '../utils/CountryMobileCode';
 import Error from '../components/Error';
 import { useNavigate } from "react-router-dom";
-import Spinner from '../utils/Rolling-1s-200px.svg';
+import Spinner from '../assets/Rolling-1s-200px.svg';
 import axios from '../config/axios';
 
 function SignupByPhone() {
