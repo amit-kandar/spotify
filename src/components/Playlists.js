@@ -10,7 +10,7 @@ import IndiasBest from './Playlist_Types/IndiasBest';
 
 function Playlist({ list }) {
     return (
-        <div className='w-full'>
+        <div className='w-full bg-[#121212] pb-[130px] pt-1'>
             {/* Recently Played */}
             <div className='my-4'>
                 <RecentlyPlayed list={list} path='/playlist' />
