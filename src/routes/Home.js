@@ -20,9 +20,10 @@ function Home() {
         const refreshToken = async () => {
             try {
                 const refreshToken = localStorage.getItem('refreshToken');
+                const accessToken = localStorage.getItem('accessToken');
 
-                if (!refreshToken) {
-                    console.error('Refresh token not found');
+                if (!refreshToken && !accessToken) {
+                    console.error('Authentication token not found');
                     localStorage.clear();
                     navigate('/login');
                     return; // Exit function if refreshToken is not found
